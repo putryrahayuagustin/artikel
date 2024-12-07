@@ -1,6 +1,8 @@
-<x-sidebar>
-    <x-slot:title>{{ $title }}</x-slot:title>
+@extends('layouts.app')
 
+@section('title', $title)
+
+@section('content')
     <div class="container mx-auto mt-5">
         @if (session('success'))
             <div x-data="{ open: true }" x-show="open" x-init="setTimeout(() => open = false, 3000)"
@@ -64,4 +66,4 @@
             </div>
         @endif
     </div>
-</x-sidebar>
+@endsection

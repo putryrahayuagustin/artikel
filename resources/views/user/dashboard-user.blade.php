@@ -1,5 +1,8 @@
-<x-sidebar>
-    <x-slot:title>{{ $title }}</x-slot:title>
+@extends('layouts.app')
+
+@section('title', $title)
+
+@section('content')
     <div class="container mx-auto px-4">
         <h2 class="text-2xl font-bold mb-4">Dashboard Artikel, Hello {{ session('name') }}</h2>
 
@@ -31,16 +34,14 @@
                             {!! Str::limit($article->body, 100) !!}
                         </p>
 
-                        <a href="{{ route('article.detail', $article->id) }}"
-                            class="text-blue-500 font-semibold">Continue reading →</a>
+                        <a href="{{ route('article.detail', $article->id) }}" class="text-blue-500 font-semibold">Continue
+                            reading →</a>
 
-                        <a href="{{ route('article.detail', $article->id) }}"
-                            class="text-blue-500 font-semibold">Beli Sekarang →</a>
-
-                        
+                        <a href="{{ route('article.detail', $article->id) }}" class="text-blue-500 font-semibold">Beli
+                            Sekarang →</a>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
-</x-sidebar>
+@endsection
