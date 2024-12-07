@@ -20,7 +20,8 @@
                 class="w-24 h-24 rounded-full" alt="profile">
             <div class="text text-center mt-2 font-semibold">
                 <h1 class="text-xl font-bold">{{ session('name') }}</h1>
-                <a href="#" class="hover:underline text-gray-500 dark:text-gray-400">Setting</a>
+                <span>Saldo: Rp. {{ number_format($saldo, 2, ',', '.') }}</span>
+                {{-- <a href="#" class="hover:underline text-gray-500 dark:text-gray-400">Setting</a> --}}
             </div>
         </div>
     </div>
