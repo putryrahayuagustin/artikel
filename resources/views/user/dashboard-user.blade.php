@@ -10,7 +10,9 @@
                 <div class="flex flex-wrap md:flex-nowrap bg-white shadow-md rounded-lg overflow-hidden mb-6">
                     <!-- Image Section -->
                     <div class="w-full md:w-1/3 h-48 md:h-auto">
-                        <img src="{{ asset($article->image) }}" alt="image_blog" class="w-full h-full object-cover">
+                        <img src="{{ asset($article->image) }}"
+                            alt="{{ $article->image == null ? 'gambar_kosong' : $article->image }}"
+                            class="w-full h-full object-cover">
                     </div>
 
                     <!-- Content Section -->
@@ -31,6 +33,11 @@
 
                         <a href="{{ route('article.detail', $article->id) }}"
                             class="text-blue-500 font-semibold">Continue reading →</a>
+
+                        <a href="{{ route('article.detail', $article->id) }}"
+                            class="text-blue-500 font-semibold">Beli Sekarang →</a>
+
+                        
                     </div>
                 </div>
             @endforeach

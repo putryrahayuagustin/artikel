@@ -17,12 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     // Route untuk mengambil semua artikel dengan kategori "Keperawatan"
-//     Route::get('/articles/keperawatan', [ArticleController::class, 'showALL']);
-// });
-Route::post('loginapi', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/article/create', [ArticleController::class, 'store']);
+    Route::put('/article/update/{id}', [ArticleController::class, 'update']);
+    Route::delete('/article/delete/{id}', [ArticleController::class, 'destroy']);
+});
 
-Route::middleware([ApiKeyMiddleware::class, 'auth:sanctum'])->group(function () {
-    Route::get('/articles/keperawatan', [ArticleController::class, 'showALL']);
+
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware([ApiKeyMiddleware::class,])->group(function () {
+    Route::get('/articles', [ArticleController::class, 'showALL']);
+    Route::get('/articles/{id}', [ArticleController::class, 'detailById']);
 });

@@ -42,14 +42,14 @@ class ArticleController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            // Mendapatkan file gambar
+
             $image = $request->file('image');
 
-            // Memeriksa ukuran dan jenis file
+
             if ($image->isValid() && in_array($image->getClientOriginalExtension(), ['jpeg', 'jpg', 'png', 'gif']) && $image->getSize() <= 2048000) { // Maksimal 2MB
-                $imageName = time() . '.' . $image->getClientOriginalExtension(); // Memberikan nama unik untuk file
-                $imagePath = $image->move(public_path('images'), $imageName); // Pindahkan gambar ke public/images
-                $data['image'] = 'images/' . $imageName; // Simpan jalur relatif ke database
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->move(public_path('images'), $imageName);
+                $data['image'] = 'images/' . $imageName;
             } else {
                 return back()->withErrors(['image' => 'Gambar tidak valid atau terlalu besar. Maksimal 2MB.']);
             }
@@ -57,7 +57,7 @@ class ArticleController extends Controller
 
         Article::create($data);
 
-        return redirect()->route('dashboard-user')->with('success', 'Artikel berhasil disimpan!');
+        return redirect()->route('dashboard-user')->with('success', 'Artikel berhasil ditambahkan!');
     }
 
     public function myArticleView(Request $request)
@@ -73,5 +73,53 @@ class ArticleController extends Controller
         $article = Article::with('author')->findOrFail($id);
 
         return view('user.articleDetail', ['article' => $article]);
+    }
+
+
+    public function edit($id)
+    {
+        $article = Article::findOrFail($id);
+        return view('form.article-edit', compact('article'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'body' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $article = Article::findOrFail($id);
+
+        $article->title = $request->input('title');
+        $article->category = $request->input('category');
+        $article->body = $request->input('body');
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            if ($image->isValid()) {
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->move(public_path('images'), $imageName);
+
+                $article->image = 'images/' . $imageName;
+            } else {
+                return back()->withErrors(['image' => 'Gambar tidak valid.']);
+            }
+        }
+
+        $article->save();
+
+        return redirect()->route('myArticle')->with('success', 'Artikel berhasil diperbarui');
+    }
+    public function destroy($id)
+    {
+        $article = Article::findOrFail($id);
+        $article->delete();
+
+        return redirect()->route('myArticle')->with('success', 'Artikel berhasil dihapus');
     }
 }

@@ -2,8 +2,14 @@
     <x-slot:title>{{ $title }}</x-slot:title>
 
     <div class="container mx-auto mt-5">
+        @if (session('success'))
+            <div x-data="{ open: true }" x-show="open" x-init="setTimeout(() => open = false, 3000)"
+                class="absolute top-20 right-20 px-4 py-3 bg-green-500 text-white rounded-lg shadow-lg">
+                {{ session('success') }}
+                <button @click="open = false" class="ml-2 font-bold">x</button>
+            </div>
+        @endif
         <h1 class="text-2xl font-bold mb-4">Artikel Saya</h1>
-
         @if ($articles->isEmpty())
             <p class="text-gray-500">Anda belum memiliki artikel.</p>
         @else
@@ -12,7 +18,8 @@
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md flex flex-row gap-4">
                         <div class="w-full md:w-1/3 h-48 md:h-auto">
                             <a href="{{ route('article.detail', $article->id) }}">
-                                <img src="{{ asset($article->image) }}" alt="image_blog"
+                                <img src="{{ asset($article->image) }}"
+                                    alt="{{ $article->image == null ? 'gambar_kosong' : $article->image }}"
                                     class="w-full h-full object-cover">
                             </a>
                         </div>
@@ -39,8 +46,11 @@
                             </a>
                             <div class="flex items-end justify-end">
                                 <div class="flex space-x-2">
-                                    <a href="" class="text-blue-500 hover:underline">Edit</a>
-                                    <form action="" method="POST" class="inline"
+                                    <a href="{{ route('article.edit', $article->id) }}"
+                                        class="text-blue-500 hover:underline">Edit</a>
+
+                                    <form action="{{ route('article.destroy', $article->id) }}" method="POST"
+                                        class="inline"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini?');">
                                         @csrf
                                         @method('DELETE')

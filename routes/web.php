@@ -37,16 +37,20 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+
+
+Route::post('register', [userController::class, 'store'])->name('register.create');
+
+// CRUD artikel
+Route::post('article', [ArticleController::class, 'create'])->name('article.create');
+Route::get('/article/{id}/edit', [ArticleController::class, 'edit'])->name('article.edit');
+Route::put('/articles/{id}', [ArticleController::class, 'update'])->name('article.update');
+Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('article.destroy');
+Route::get('/articles/{id}', [ArticleController::class, 'detail'])->name('article.detail');
+
+
+Route::post('login', [userController::class, 'authentication'])->name('login.auth');
 Route::post('logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
-
-
-Route::post('register', [userController::class, 'store'])->name('register.create');
-Route::post('article', [ArticleController::class, 'create'])->name('article.create');
-Route::post('login', [userController::class, 'authentication'])->name('login.auth');
-
-Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('article.destroy');
-Route::put('/articles/{id}', [ArticleController::class, 'update'])->name('article.update');
-Route::get('/articles/{id}', [ArticleController::class, 'detail'])->name('article.detail');
