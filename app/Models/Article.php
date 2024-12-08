@@ -20,6 +20,7 @@ class Article extends Model
         'category',
         'image',
         'body',
+        'price',
     ];
 
     // Relasi ke model User

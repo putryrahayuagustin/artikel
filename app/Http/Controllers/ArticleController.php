@@ -12,9 +12,6 @@ class ArticleController extends Controller
 {
     public function index()
     {
-
-
-
         return view('user.dashboard-artikel', compact('articles'));
     }
 
@@ -97,6 +94,7 @@ class ArticleController extends Controller
         $article->title = $request->input('title');
         $article->category = $request->input('category');
         $article->body = $request->input('body');
+        $article->price = $request->input('price');
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -121,5 +119,14 @@ class ArticleController extends Controller
         $article->delete();
 
         return redirect()->route('myArticle')->with('success', 'Artikel berhasil dihapus');
+    }
+
+    public function buy($id)
+    {
+        $article = Article::findOrFail($id);
+
+
+
+        redirect()->route('dashboard-user')->with('success', 'Artikel berhasil dibeli');
     }
 }
