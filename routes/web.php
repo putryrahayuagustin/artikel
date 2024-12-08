@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +27,7 @@ Route::get('register', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('user.dashboard-user', [
-            'title' => 'Dashboard',
-            'articles' => Article::with('author')->get()
-        ]);
-    })->middleware('auth')->name('dashboard-user');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard-user');
 
     Route::get('/form-article', [ArticleController::class, 'form'])->name('mulai-menulis');
 
