@@ -9,14 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class userController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $users = User::get();
+        return view('user.index', compact('users'));
     }
 
     /**
@@ -66,8 +67,6 @@ class userController extends Controller
 
         $credentials = $request->only(['email', 'password']);
 
-
-
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             session(['id' => Auth::user()->id]);
@@ -75,13 +74,14 @@ class userController extends Controller
             session(['role' => Auth::user()->role]);
             session(['email' => Auth::user()->email]);
 
-
-            if (Auth::user()->role == 'admin') {
-                return redirect()->route('dashboard.admin');
-            } else {
-                $articles = Article::all();
-                return redirect()->route('dashboard-user');
-            }
+            // $articles = Article::all();
+            return redirect()->route('dashboard-user');
+            // if (Auth::user()->role == 'admin') {
+            //     return redirect()->route('dashboard.admin');
+            // } else {
+            //     $articles = Article::all();
+            //     return redirect()->route('dashboard-user');
+            // }
         } else {
 
             return redirect()->route('login.view')->with('error', 'Email or Password Wrong');
@@ -93,7 +93,8 @@ class userController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return view('user.edit', compact('user'));
     }
 
     /**
@@ -101,7 +102,14 @@ class userController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->brimo_id = $request->input('brimo_id');
+        $user->role = $request->input('role');
+        $user->save();
+
+        return redirect()->route('users.index');
     }
 
     /**

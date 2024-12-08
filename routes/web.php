@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\userController;
+use App\Http\Controllers\UserController;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +27,11 @@ Route::get('register', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('user.dashboard-user', ['title' => 'Dashboard'], ['articles' => Article::with('author')->get()]);
+        return view('user.dashboard-user', [
+            'title' => 'Dashboard',
+            'articles' => Article::with('author')->get()
+        ]);
     })->middleware('auth')->name('dashboard-user');
-
 
     Route::get('/form-article', [ArticleController::class, 'form'])->name('mulai-menulis');
 
@@ -39,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::post('register', [userController::class, 'store'])->name('register.create');
+Route::post('register', [UserController::class, 'store'])->name('register.create');
 
 // CRUD artikel
 Route::post('article', [ArticleController::class, 'create'])->name('article.create');
@@ -49,8 +51,12 @@ Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('ar
 Route::get('/articles/{id}', [ArticleController::class, 'detail'])->name('article.detail');
 
 
-Route::post('login', [userController::class, 'authentication'])->name('login.auth');
+Route::post('login', [UserController::class, 'authentication'])->name('login.auth');
 Route::post('logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('users', UserController::class);
+});

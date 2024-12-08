@@ -28,11 +28,19 @@
 
     <!-- Sidebar Navigation -->
     <nav class="mt-6 border-b-2 border-gray-600 mb-4 pb-2">
-        <a href="{{ Auth::user()->role === 'admin' ? route('dashboard-admin') : route('dashboard-user') }}"
+        <a href="{{ route('dashboard-user') }}"
             class="block py-2.5 px-4 mx-4 my-2 rounded transition duration-200 hover:bg-gray-700 hover:text-white
                     {{ request()->routeIs('dashboard-admin') || request()->routeIs('dashboard-user') ? 'bg-gray-700 text-white' : '' }}">
             Dashboard
         </a>
+        @if (session('role') == 'admin')
+        <a href="{{ route('users.index') }}"
+            class="block py-2.5 px-4 mx-4 my-2 rounded transition duration-200 hover:bg-gray-700 hover:text-white
+                    {{ request()->routeIs('dashboard-admin') || request()->routeIs('dashboard-user') ? 'bg-gray-700 text-white' : '' }}">
+            Manage User
+        </a>
+        @endif
+
         <a href="{{ route('myArticle') }}"
             class="{{ session('role') == 'admin' ? 'hidden' : 'block' }} py-2.5 mx-4 px-4 my-2 rounded transition duration-200 hover:bg-gray-700 hover:text-white {{ request()->routeIs('myArticle') ? 'bg-gray-700 text-white' : '' }}
                     ">

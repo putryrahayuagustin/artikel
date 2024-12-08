@@ -20,13 +20,17 @@ class Sidebar extends Component
 
     public function getSaldo()
     {
+        $brimoId = auth()->user()->brimo_id;
+
+        if (empty($brimoId)) {
+            return 0;
+        }
+
         try {
             $client = new Client();
             $baseUrl = env('BRIMO_BASE_URL');
-            // $userId = auth()->user()->id;
-            $userId = 1;
 
-            $response = $client->request('GET', "$baseUrl/rekening/showRekening/$userId");
+            $response = $client->request('GET', "$baseUrl/rekening/showRekening/$brimoId");
             $content = $response->getBody()->getContents();
 
             $data = json_decode($content, true);
