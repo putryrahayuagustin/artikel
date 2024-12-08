@@ -6,7 +6,10 @@ namespace App\Http\Controllers;
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\UserArtikel;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ArticleController extends Controller
 {
@@ -36,6 +39,7 @@ class ArticleController extends Controller
             'body' => $request->body,
             'category' => $request->category,
             'user_id' => auth()->id(),
+            'price' => $request->price,
         ];
 
         if ($request->hasFile('image')) {
@@ -124,9 +128,43 @@ class ArticleController extends Controller
     public function buy($id)
     {
         $article = Article::findOrFail($id);
+        $brimoId = auth()->user()->brimo_id;
 
+        if (empty($brimoId)) {
+            return 0;
+        }
 
+        try {
+            $client = new Client();
+            $baseUrl = env('BRIMO_BASE_URL');
 
-        redirect()->route('dashboard-user')->with('success', 'Artikel berhasil dibeli');
+            // use post request
+            $response = $client->request('POST', "$baseUrl/rekening/kredit", [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'user_id' => $brimoId,
+                    'nominal' => $article->price,
+                ],
+            ]);
+            $content = $response->getBody()->getContents();
+
+            $data = json_decode($content, true);
+
+            if (($data['success'] ?? null) == true) {
+                UserArtikel::create([
+                    'user_id' => auth()->id(),
+                    'artikel_id' => $article->id
+                ]);
+
+                return redirect()->route('dashboard-user')->with('success', 'Artikel berhasil dibeli');
+            } else {
+                return redirect()->route('dashboard-user')->with('error', $data['message'] ?? 'Gagal membeli artikel');
+            }
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return redirect()->route('dashboard-user')->with('error', $th->getMessage());
+        }
     }
 }

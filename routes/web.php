@@ -45,6 +45,7 @@ Route::get('/article/{id}/edit', [ArticleController::class, 'edit'])->name('arti
 Route::put('/articles/{id}', [ArticleController::class, 'update'])->name('article.update');
 Route::delete('/articles/{id}', [ArticleController::class, 'destroy'])->name('article.destroy');
 Route::get('/articles/{id}', [ArticleController::class, 'detail'])->name('article.detail');
+Route::get('article/buy/{id}', [ArticleController::class, 'buy'])->name('article.buy');
 
 
 Route::post('login', [UserController::class, 'authentication'])->name('login.auth');

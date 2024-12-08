@@ -33,15 +33,40 @@
                         <p class="text-gray-700 mb-4 leading-relaxed">
                             {!! Str::limit($article->body, 100) !!}
                         </p>
+                        <p class="text-gray-700 font-semibold">Harga: Rp.    {{ number_format($article->price, 2, ',', '.') }}</p>
 
-                        <a href="{{ route('article.detail', $article->id) }}" class="text-blue-500 font-semibold">Continue
-                            reading →</a>
-
-                        <a href="{{ route('article.detail', $article->id) }}" class="text-blue-500 font-semibold">Beli
-                            Sekarang →</a>
+                        @if (in_array($article->id, $userArtikelIds) || auth()->user()->id == $article->user_id)
+                            <a href="{{ route('article.detail', $article->id) }}"
+                                class="text-blue-500 font-semibold">Continue
+                                reading →</a>
+                        @else
+                            <a href="#" class="text-blue-500 font-semibold buy-now" data-id="{{ $article->id }}">Beli
+                                Sekarang →</a>
+                        @endif
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        $('.buy-now').click(function() {
+            var id = $(this).data('id');
+            swal({
+                    title: "Beli Artikel?",
+                    text: "Apakah Kamu Yakin Membeli Artikel Ini?!!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((yes) => {
+                    if (yes) {
+                        // redirect to the buy route
+                        window.location.href = "{{ route('article.buy', ':id') }}".replace(':id', id);
+                    }
+                });
+        });
+    </script>
 @endsection
